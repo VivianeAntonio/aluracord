@@ -38,9 +38,10 @@ function Titulo(props) {
             <Tag>{props.children}</Tag>
             <style jsx>{`
                 ${Tag} {
-                     color: ${appConfig.theme.colors.neutrals['000']};
+                     color: ${appConfig.theme.colors.neon["aqua"]};
                      font-size: 24px;
                      font-weight:600;
+                     text-shadow: 0px 0px 6px rgba(4, 197, 209, 0.8);
                 }
              `}</style>
         </>
@@ -68,8 +69,8 @@ export default function PaginaInicial() {
             <Box
                 styleSheet={{
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    backgroundColor: appConfig.theme.colors.primary[500],
-                    backgroundImage: 'url(https://virtualbackgrounds.site/wp-content/uploads/2020/08/the-matrix-digital-rain.jpg)',
+                    backgroundColor: appConfig.theme.colors.primary['000'],
+                    backgroundImage: 'url(https://i.ytimg.com/vi/jYIYL13hClI/maxresdefault.jpg)',
                     backgroundRepeat: 'no-repeat', backgroundSize: 'cover', backgroundBlendMode: 'multiply',
                 }}
             >
@@ -85,7 +86,7 @@ export default function PaginaInicial() {
                         width: '100%', maxWidth: '700px',
                         borderRadius: '5px', padding: '32px', margin: '16px',
                         boxShadow: '0 2px 10px 0 rgb(0 0 0 / 20%)',
-                        backgroundColor: appConfig.theme.colors.neutrals[700],
+                        backgroundColor: appConfig.theme.colors.transparent["box1"],
                     }}
                 >
                     {/* Formulário */}
@@ -106,22 +107,26 @@ export default function PaginaInicial() {
                             textFieldColors={{
                                 neutral: {
                                     textColor: appConfig.theme.colors.neutrals[200],
-                                    mainColor: appConfig.theme.colors.neutrals[900],
-                                    mainColorHighlight: appConfig.theme.colors.primary[500],
-                                    backgroundColor: appConfig.theme.colors.neutrals[800],
+                                    mainColor: appConfig.theme.colors.neon["aqua"],
+                                    mainColorHighlight: appConfig.theme.colors.neon["aqua"],
+                                    backgroundColor: 'black',
                                 },
                             }}
                         />
                         <Button
+                            styleSheet={{
+                                backgroundColor: '#000'
+                            }}
                             type='submit'
                             label='Entrar'
                             fullWidth
                             buttonColors={{
-                                contrastColor: appConfig.theme.colors.neutrals["000"],
-                                mainColor: appConfig.theme.colors.primary[500],
-                                mainColorLight: appConfig.theme.colors.primary[400],
-                                mainColorStrong: appConfig.theme.colors.primary[600],
+                                contrastColor: '#fff',
+                                mainColor: appConfig.theme.colors.neon["aqua"],                                
+                                //mainColorLight: appConfig.theme.colors.primary[400],
+                               //mainColorStrong: appConfig.theme.colors.primary[600],
                             }}
+                            variant='secondary'
                         />
                     </Box>
                     {/* Formulário */}
@@ -135,9 +140,9 @@ export default function PaginaInicial() {
                             alignItems: 'center',
                             maxWidth: '200px',
                             padding: '16px',
-                            backgroundColor: appConfig.theme.colors.neutrals[800],
+                            backgroundColor: appConfig.theme.colors.neutrals[900],
                             border: '1px solid',
-                            borderColor: appConfig.theme.colors.neutrals[999],
+                            borderColor: appConfig.theme.colors.neon["aqua"],
                             borderRadius: '10px',
                             flex: 1,
                             minHeight: '240px',
