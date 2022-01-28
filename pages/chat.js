@@ -16,9 +16,9 @@ export default function ChatPage() {
         supabaseClient
             .from('mensagens')
             .select('*')
-            .order('id', {ascending: false})
-            .then(({data}) =>{
-                console.log('Dados da consulta', data);
+            .order('id', { ascending: false })
+            .then(({ data }) => {
+                console.log('Dados da consulta:', data);
                 setListaDeMensagens(data);
         });
     }, []);
@@ -34,21 +34,17 @@ export default function ChatPage() {
         supabaseClient
             .from('mensagens')
             .insert([
+                // Tem que ser um objeto com os MESMOS CAMPOS que escrevi no Supabase
                 mensagem
             ])
-            .then(([{data}]) => {
-                console.log('Criando mensagem:', oQueTaVindoComoResposta);
+            .then(({ data }) => {
+                console.log('Criando mensagem: ', data);
                 setListaDeMensagens([
                      data[0],
                      ...listaDeMensagens,            
                  ])
 
-            });
-
-        // setListaDeMensagens([
-        //     mensagem,
-        //     ...listaDeMensagens,            
-        // ])
+            });    
         setMensagem('');
     }
 
@@ -57,7 +53,7 @@ export default function ChatPage() {
             styleSheet={{
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
                 backgroundColor: appConfig.theme.colors.primary[500],
-                backgroundImage: `url(https://virtualbackgrounds.site/wp-content/uploads/2020/08/the-matrix-digital-rain.jpg)`,
+                backgroundImage: `url(https://i.ytimg.com/vi/jYIYL13hClI/maxresdefault.jpg)`,
                 backgroundRepeat: 'no-repeat', backgroundSize: 'cover', backgroundBlendMode: 'multiply',
                 color: appConfig.theme.colors.neutrals['000']
             }}
