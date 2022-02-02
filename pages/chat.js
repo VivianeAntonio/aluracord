@@ -1,14 +1,26 @@
 import { Box, Text, TextField, Image, Button } from '@skynexui/components';
 import React from 'react';
 import appConfig from '../config.json';
-import { createClient } from '@supabase/supabase-js'
+import { useRouter } from 'next/router';
+import { createClient } from '@supabase/supabase-js';
+import { ButtonSendSticker } from '../src/components/ButtonSendSticker';
 
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5vbiIsImlhdCI6MTY0MzMyMjk5OCwiZXhwIjoxOTU4ODk4OTk4fQ.AJbmmJgnx309denFthz-js3se8-nYh5tvMw7qRSA07s'
 const SUPABASE_URL = 'https://ajdkonlocbsoeuoqfviq.supabase.co'
 const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
+function escutaMensagensEmTempoReal(adicionaMensagem) {
+    return supabaseClient
+        .from('mensagens')
+        .on('INSERT', (respostaLive) => {
+            adicionaMensagem(respostaLive.new);
+        })
+        .subscribe();
+}
 
 export default function ChatPage() {
+    const roteamento = useRouter();
+    const usuarioLogado = roteamento.query.username;
     const [mensagem, setMensagem] = React.useState('');
     const [listaDeMensagens, setListaDeMensagens] = React.useState([]);
 
@@ -18,16 +30,29 @@ export default function ChatPage() {
             .select('*')
             .order('id', { ascending: false })
             .then(({ data }) => {
-                console.log('Dados da consulta:', data);
+                //console.log('Dados da consulta:', data);
                 setListaDeMensagens(data);
         });
+
+        const subscription = escutaMensagensEmTempoReal((novaMensagem) => {
+            setListaDeMensagens((valorAtualDaLista) => {
+                return [
+                    novaMensagem,
+                    ...valorAtualDaLista,
+                ]
+                
+            })
+        });
+        return () => {
+            subscription.unsubscribe();
+          }
     }, []);
     
 
     function handleNovaMensagem(novaMensagem) {
         const mensagem = {
             //id: listaDeMensagens.length + 1,
-            de: 'VivianeAntonio',
+            de: usuarioLogado,
             texto: novaMensagem,
         };
 
@@ -38,13 +63,9 @@ export default function ChatPage() {
                 mensagem
             ])
             .then(({ data }) => {
-                console.log('Criando mensagem: ', data);
-                setListaDeMensagens([
-                     data[0],
-                     ...listaDeMensagens,            
-                 ])
+            //console.log('Criando mensagem: ', data);                
+            }); 
 
-            });    
         setMensagem('');
     }
 
@@ -52,7 +73,7 @@ export default function ChatPage() {
         <Box
             styleSheet={{
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
-                backgroundColor: appConfig.theme.colors.primary[500],
+                //backgroundColor: appConfig.theme.colors.neon["aqua"],
                 backgroundImage: `url(https://i.ytimg.com/vi/jYIYL13hClI/maxresdefault.jpg)`,
                 backgroundRepeat: 'no-repeat', backgroundSize: 'cover', backgroundBlendMode: 'multiply',
                 color: appConfig.theme.colors.neutrals['000']
@@ -65,11 +86,11 @@ export default function ChatPage() {
                     flex: 1,
                     boxShadow: '0 2px 10px 0 rgb(0 0 0 / 20%)',
                     borderRadius: '5px',
-                    backgroundColor: appConfig.theme.colors.neutrals[700],
+                    backgroundColor: appConfig.theme.colors.transparent["box1"],
                     height: '100%',
                     maxWidth: '95%',
                     maxHeight: '95vh',
-                    padding: '32px',
+                    padding: '32px',                  
                 }}
             >
                 <Header />
@@ -79,10 +100,11 @@ export default function ChatPage() {
                         display: 'flex',
                         flex: 1,
                         height: '80%',
-                        backgroundColor: appConfig.theme.colors.neutrals[600],
+                        backgroundColor: appConfig.theme.colors.transparent["box2"],
                         flexDirection: 'column',
                         borderRadius: '5px',
                         padding: '16px',
+                        
                     }}
                 >
 
@@ -130,6 +152,13 @@ export default function ChatPage() {
                                 color: appConfig.theme.colors.neutrals[200],
                             }}
                         />
+                        {/* Callback */}
+                        <ButtonSendSticker 
+                            onStickerClick={(sticker) => {
+                                //  console.log('[USANDO O COMPONENTE]salva esse sticker no banco', sticker);
+                                handleNovaMensagem(':sticker: ' + sticker);
+                            }}
+                        />
                     </Box>
                 </Box>
             </Box>
@@ -156,12 +185,12 @@ function Header() {
 }
 
 function MessageList(props) {
-    console.log(props.listaDeMensagens);
+    //console.log(props.listaDeMensagens);
     return (
         <Box
             tag="ul"
             styleSheet={{
-                overflow: 'scroll',
+                overflow: 'auto',
                 display: 'flex',
                 flexDirection: 'column-reverse',
                 flex: 1,
@@ -212,7 +241,15 @@ function MessageList(props) {
                                 {(new Date().toLocaleDateString())}
                             </Text>
                         </Box>
-                        {mensagem.texto}
+                        {mensagem.texto.startsWith(':sticker:')
+                            ? (
+                                <Image src={mensagem.texto.replace(':sticker:', '')} />
+                            )
+                            : (
+                                mensagem.texto
+                            )
+                        }
+                        {/* {mensagem.texto} */}
                     </Text>
                 );
             })}
